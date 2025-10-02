@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wonder Trade</title>
+
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #000; /* fundo preto */
+      font-family: Arial, sans-serif;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    /* imagens sorteadas */
+    #result img {
+      margin-top: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    /* contador de cliques */
+    #clickCount {
+      color: white;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    /* imagem fixa limpa */
+    #fixedImage {
+      width: 250px;
+      height: auto;
+      border-radius: 0;
+      box-shadow: none;
+      margin-bottom: 20px;
+    }
+
+    /* mensagem temporária */
+    #result p {
+      color: white;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <p id="lastClickTime" style="color: white; margin-bottom: 10px;">Último clique: nunca</p>
+
+  <!-- Imagem fixa -->
+  <img id="fixedImage" src="img/imgsite.png" alt="Minha imagem fixa">
+
+  <!-- Contador de cliques -->
+  <p id="clickCount">Você clicou 0 vezes</p>
+
+  <!-- Botão Wonder Trade -->
+  <button id="wonderBtn" onclick="wonderTrade()">Wonder Trade</button>
+
+  <!-- Resultado da troca -->
+  <div id="result"></div>
+
+  <script>
+    // imagens sorteadas
+    const images = [
+      "img/Pokemon1.png",
+      "img/Pokemon2.png",
+      "img/Pokemon3.png",
+      "img/Pokemon4.png",
+      "img/Pokemon5.png",
+      "img/Pokemon6.png",
+      "img/Pokemon7.png",
+      "img/Pokemon8.png",
+      "img/Pokemon9.png",
+      "img/Pokemon10.png",
+      "img/Pokemon11.png",
+      "img/Pokemon12.png",
+      "img/Pokemon13.png",
+      "img/Pokemon14.png",
+      "img/Pokemon15.png",
+      "img/Pokemon16.png",
+      "img/Pokemon17.png",
+      "img/Pokemon18.png",
+      "img/Pokemon19.png",
+      "img/Pokemon20.png",
+      "img/Pokemon21.png",
+      "img/Pokemon22.png",
+      "img/Pokemon23.png",
+      "img/Pokemon24.png",
+      "img/Pokemon25.png",
+      "img/Pokemon26.png",
+      "img/Pokemon27.png",
+      "img/Pokemon28.png",
+      "img/Pokemon29.png",
+      "img/Pokemon30.png",
+      "img/Pokemon31.png",
+      "img/Pokemon32.png",
+      "img/Pokemon33.png",
+      "img/Pokemon34.png",
+      "img/Pokemon35.png",
+      "img/Pokemon36.png",
+      "img/Pokemon37.png",
+      "img/Pokemon38.png",
+      "img/Pokemon39.png",
+      "img/Pokemon40.png",
+      "img/Pokemon41.png",
+      "img/Pokemon42.png",
+      "img/Pokemon43.png",
+      "img/Pokemon44.png",
+      "img/Pokemon45.png",
+      "img/Pokemon46.png",
+      "img/Pokemon47.png",
+      "img/Pokemon48.png",
+      "img/Pokemon49.png",
+      "img/Pokemon50.png",
+      "img/Pokemon52.png",
+      "img/Pokemon53.png",
+      "img/Pokemon54.png",
+      "img/Pokemon55.png",
+      "img/Pokemon56.png",
+      "img/Pokemon57.png",
+      "img/Pokemon58.png",
+      "img/Pokemon59.png",
+      "img/Pokemon60.png",
+      "img/Pokemon61.png",
+      "img/Pokemon62.png",
+      "img/Pokemon63.png",
+      "img/Pokemon64.png",
+      "img/Pokemon65.png",
+      "img/Pokemon66.png",
+      "img/Pokemon67.png",
+      "img/Pokemon68.png",
+      "img/Pokemon69.png",
+      "img/Pokemon70.png",
+      "img/Pokemon71.png",
+      "img/Pokemon72.png",
+      "img/Pokemon73.png",
+      "img/Pokemon74.png",
+      "img/Pokemon75.png",
+      "img/Pokemon76.png",
+      "img/Pokemon77.png",
+      "img/Pokemon78.png",
+      "img/Pokemon79.png",
+      "img/Pokemon80.png",
+      "img/Pokemon81.png",
+      "img/Pokemon82.png",
+      "img/Pokemon83.png",
+      "img/Pokemon84.png",
+      "img/Pokemon85.png",
+      "img/Pokemon86.png",
+      "img/Pokemon87.png",
+      "img/Pokemon88.png",
+      "img/Pokemon89.png",
+      "img/Pokemon90.png",
+      "img/Pokemon91.png",
+      "img/Pokemon92.png",
+      "img/Pokemon93.png",
+      "img/Pokemon94.png",
+      "img/Pokemon95.png",
+      "img/Pokemon96.png",
+      "img/Pokemon97.png",
+      "img/Pokemon98.png",
+      "img/Pokemon99.png",
+      "img/Pokemon100.png",
+      "img/Pokemon101.png",
+      "img/Pokemon102.png",
+      "img/Pokemon103.png",
+      "img/Pokemon104.png",
+      "img/Pokemon105.png",
+      "img/Pokemon106.png",
+      "img/Pokemon107.png",
+      "img/Pokemon108.png",
+      "img/Pokemon109.png",
+      "img/Pokemon110.png",
+      "img/Pokemon111.png",
+      "img/Pokemon112.png",
+      "img/Pokemon113.png",
+      "img/Pokemon114.png",
+      "img/Pokemon115.png",
+      "img/Pokemon116.png",
+      "img/Pokemon117.png",
+      "img/Pokemon118.png",
+      "img/Pokemon119.png",
+      "img/Pokemon120.png",
+      "img/Pokemon121.png",
+      "img/Pokemon122.png",
+      "img/Pokemon123.png",
+      "img/Pokemon124.png",
+      "img/Pokemon125.png",
+      "img/Pokemon126.png",
+      "img/Pokemon127.png",
+      "img/Pokemon128.png",
+      "img/Pokemon129.png",
+      "img/Pokemon130.png",
+      "img/Pokemon131.png",
+      "img/Pokemon132.png",
+      "img/Pokemon133.png",
+      "img/Pokemon134.png",
+      "img/Pokemon135.png",
+      "img/Pokemon136.png",
+      "img/Pokemon137.png",
+      "img/Pokemon138.png",
+      "img/Pokemon139.png",
+      "img/Pokemon140.png",
+      "img/Pokemon141.png",
+      "img/Pokemon142.png",
+      "img/Pokemon143.png",
+      "img/Pokemon144.png",
+      "img/Pokemon145.png",
+      "img/Pokemon146.png",
+      "img/Pokemon147.png",
+      "img/Pokemon148.png",
+      "img/Pokemon149.png",
+      "img/Pokemon150.png",
+      "img/Pokemon151.png",
+      "img/Pokemon152.png",
+      "img/Pokemon153.png",
+      "img/Pokemon154.png",
+      "img/Pokemon155.png",
+      "img/Pokemon156.png",
+      "img/Pokemon157.png",
+      "img/Pokemon158.png",
+      "img/Pokemon159.png",
+      "img/Pokemon160.png",
+      "img/Pokemon161.png",
+      "img/Pokemon162.png",
+      "img/Pokemon163.png",
+      "img/Pokemon164.png",
+      "img/Pokemon165.png",
+      "img/Pokemon166.png",
+      "img/Pokemon167.png",
+      "img/Pokemon168.png",
+      "img/Pokemon169.png",
+      "img/Pokemon170.png",
+      "img/Pokemon171.png",
+      "img/Pokemon172.png",
+      "img/Pokemon173.png",
+      "img/Pokemon174.png",
+      "img/Pokemon175.png",
+      "img/Pokemon176.png",
+      "img/Pokemon177.png",
+      "img/Pokemon178.png",
+      "img/Pokemon179.png",
+      "img/Pokemon180.png",
+      "img/Pokemon181.png",
+      "img/Pokemon182.png",
+      "img/Pokemon183.png",
+      "img/Pokemon184.png",
+      "img/Pokemon185.png",
+      "img/Pokemon186.png",
+      "img/Pokemon187.png",
+      "img/Pokemon188.png",
+      "img/Pokemon189.png",
+      "img/Pokemon190.png",
+      "img/Pokemon191.png",
+      "img/Pokemon192.png",
+      "img/Pokemon193.png",
+      "img/Pokemon194.png",
+      "img/Pokemon195.png",
+      "img/Pokemon196.png",
+      "img/Pokemon197.png",
+      "img/Pokemon198.png",
+      "img/Pokemon199.png",
+      "img/Pokemon200.png"
+
+
+    ];
+
+    function wonderTrade() {
+      const button = document.getElementById("wonderBtn");
+      const result = document.getElementById("result");
+
+      const now = Date.now();
+      const lastClick = localStorage.getItem('lastClickTimestamp');
+      const cooldown = 30 * 60 * 1000; // ajuste do cooldown
+
+      // verifica cooldown
+      if (lastClick && now - lastClick < cooldown) {
+        const minutesLeft = Math.ceil((cooldown - (now - lastClick)) / 60000);
+        alert(`Espere ${minutesLeft} minutos antes de trocar novamente!`);
+        return;
+      }
+
+      // marca timestamp do clique
+      localStorage.setItem('lastClickTimestamp', now);
+
+      // desativa o botão temporariamente para o delay de 2 segundos
+      button.disabled = true;
+      button.style.opacity = 0.5;
+
+      // contador de cliques
+      let count = localStorage.getItem('clickCount') || 0;
+      count = parseInt(count) + 1;
+      localStorage.setItem('clickCount', count);
+      document.getElementById("clickCount").innerText = `Você clicou ${count} vezes`;
+
+      // hora do último clique
+      const date = new Date();
+      const hours = date.getHours().toString().padStart(2,'0');
+      const minutes = date.getMinutes().toString().padStart(2,'0');
+      const timeString = `${hours}:${minutes}`;
+      localStorage.setItem('lastClickTime', timeString);
+      document.getElementById("lastClickTime").innerText = `Último clique: ${timeString}`;
+
+      // sorteio da imagem
+      const randomIndex = Math.floor(Math.random() * images.length);
+      const selectedImage = images[randomIndex];
+
+      // mensagem temporária
+      result.innerHTML = `<p>Trocando... aguarde 3 segundos</p>`;
+
+      // delay antes de mostrar a imagem
+      setTimeout(() => {
+        // aqui definimos width manualmente
+        result.innerHTML = `<img src="${selectedImage}" alt="Imagem sorteada" style="width:100px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.3);">`;
+        button.disabled = false;
+        button.style.opacity = 1;
+      }, 2000);
+    }
+  </script>
+
+</body>
+</html>
