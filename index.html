@@ -1,438 +1,340 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Quadrados com Upload, Texto e Ícones</title>
-<style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wonder Trade</title>
+
+  <style>
     body {
-        margin: 0;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        background-color: #f0f0f0;
-        font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #000; /* fundo preto */
+      font-family: Arial, sans-serif;
     }
 
-    .main-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-top: 20px;
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #007bff;
+      color: white;
+      transition: 0.3s;
     }
 
-    /* Caixa de texto superior centralizada */
-    #super-top {
-        width: 300px;
-        padding: 8px;
-        font-size: 16px;
-        text-align: center;
-        margin-bottom: 20px;
+    button:hover {
+      background: #0056b3;
     }
 
-    /* Container das caixas de texto do topo com ícones */
-    .top-texts {
-        display: grid;
-        grid-template-columns: repeat(3, 100px);
-        grid-auto-rows: auto;
-        gap: 20px;
-        margin-bottom: 30px;
-        justify-content: center;
-        width: 100%;
+    /* imagens sorteadas */
+    #result img {
+      margin-top: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
-    .top-box {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    /* contador de cliques */
+    #clickCount {
+      color: white;
+      font-size: 18px;
+      margin-bottom: 10px;
     }
 
-    .top-box img {
-        width: 40px;
-        height: 40px;
-        margin-bottom: 5px;
+    /* imagem fixa limpa */
+    #fixedImage {
+      width: 250px;
+      height: auto;
+      border-radius: 0;
+      box-shadow: none;
+      margin-bottom: 20px;
     }
 
-    .top-box input {
-        width: 100px;
-        padding: 5px;
-        text-align: center;
-        font-size: 14px;
+    /* mensagem temporária */
+    #result p {
+      color: white;
+      font-size: 16px;
     }
-
-    /* Centralizar última linha */
-    .last-row {
-        display: flex;
-        justify-content: center;
-        gap: 20px;
-        grid-column: 1 / -1; /* ocupa toda a largura do grid */
-    }
-
-    /* Grid dos quadrados grandes: 3 colunas × 2 linhas */
-    .container {
-        display: grid;
-        grid-template-columns: repeat(3, 150px);
-        grid-template-rows: repeat(2, auto);
-        gap: 20px;
-        justify-items: center;
-        margin-bottom: 40px;
-    }
-
-    .square-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .square {
-        width: 150px;
-        height: 150px;
-        background-color: white;
-        border: 2px solid #ccc;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .square img.uploaded {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        pointer-events: none;
-    }
-
-    .square input[type="file"] {
-        display: none;
-    }
-
-    .text-box {
-        margin-top: 5px;
-        width: 150px;
-        box-sizing: border-box;
-        padding: 5px;
-        font-size: 14px;
-        text-align: center;
-    }
-
-    /* Seção de quadrados menores (16) */
-    .small-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 100px);
-        grid-template-rows: repeat(4, auto);
-        gap: 15px;
-        justify-items: center;
-        margin-bottom: 40px;
-    }
-
-    .small-square {
-        width: 100px;
-        height: 100px;
-        background-color: white;
-        border: 2px solid #ccc;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .small-square img.uploaded {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        pointer-events: none;
-    }
-
-    .small-square input[type="file"] {
-        display: none;
-    }
-
-    .small-text-box {
-        margin-top: 5px;
-        width: 100px;
-        box-sizing: border-box;
-        padding: 4px;
-        font-size: 12px;
-        text-align: center;
-    }
-</style>
+  </style>
 </head>
+
 <body>
+  <p id="lastClickTime" style="color: white; margin-bottom: 10px;">Último clique: nunca</p>
 
-<div class="main-container">
+  <!-- Imagem fixa -->
+  <img id="fixedImage" src="img/imgsite.png" alt="Minha imagem fixa">
 
-    <!-- Caixa de texto superior centralizada -->
-    <input type="text" id="super-top" placeholder="Texto superior">
+  <!-- Contador de cliques -->
+  <p id="clickCount">Você clicou 0 vezes</p>
 
-    <!-- Topo: 3+3+2 caixas -->
-    <div class="top-texts">
-        <!-- Primeira linha -->
-        <div class="top-box">
-            <img src="img/icon1.png" alt="Icon 1">
-            <input type="text" id="top0" placeholder="Texto 1">
-        </div>
-        <div class="top-box">
-            <img src="img/icon2.png" alt="Icon 2">
-            <input type="text" id="top1" placeholder="Texto 2">
-        </div>
-        <div class="top-box">
-            <img src="img/icon3.png" alt="Icon 3">
-            <input type="text" id="top2" placeholder="Texto 3">
-        </div>
+  <!-- Botão Wonder Trade -->
+  <button id="wonderBtn" onclick="wonderTrade()">Wonder Trade</button>
 
-        <!-- Segunda linha -->
-        <div class="top-box">
-            <img src="img/icon4.png" alt="Icon 4">
-            <input type="text" id="top3" placeholder="Texto 4">
-        </div>
-        <div class="top-box">
-            <img src="img/icon5.png" alt="Icon 5">
-            <input type="text" id="top4" placeholder="Texto 5">
-        </div>
-        <div class="top-box">
-            <img src="img/icon6.png" alt="Icon 6">
-            <input type="text" id="top5" placeholder="Texto 6">
-        </div>
+  <!-- Resultado da troca -->
+  <div id="result"></div>
 
-        <!-- Última linha centralizada -->
-        <div class="last-row">
-            <div class="top-box">
-                <img src="img/icon7.png" alt="Icon 7">
-                <input type="text" id="top6" placeholder="Texto 7">
-            </div>
-            <div class="top-box">
-                <img src="img/icon8.png" alt="Icon 8">
-                <input type="text" id="top7" placeholder="Texto 8">
-            </div>
-        </div>
-    </div>
+  <script>
+    // imagens sorteadas
+    const images = [
+      "img/Pokemon1.png",
+      "img/Pokemon2.png",
+      "img/Pokemon3.png",
+      "img/Pokemon4.png",
+      "img/Pokemon5.png",
+      "img/Pokemon6.png",
+      "img/Pokemon7.png",
+      "img/Pokemon8.png",
+      "img/Pokemon9.png",
+      "img/Pokemon10.png",
+      "img/Pokemon11.png",
+      "img/Pokemon12.png",
+      "img/Pokemon13.png",
+      "img/Pokemon14.png",
+      "img/Pokemon15.png",
+      "img/Pokemon16.png",
+      "img/Pokemon17.png",
+      "img/Pokemon18.png",
+      "img/Pokemon19.png",
+      "img/Pokemon20.png",
+      "img/Pokemon21.png",
+      "img/Pokemon22.png",
+      "img/Pokemon23.png",
+      "img/Pokemon24.png",
+      "img/Pokemon25.png",
+      "img/Pokemon26.png",
+      "img/Pokemon27.png",
+      "img/Pokemon28.png",
+      "img/Pokemon29.png",
+      "img/Pokemon30.png",
+      "img/Pokemon31.png",
+      "img/Pokemon32.png",
+      "img/Pokemon33.png",
+      "img/Pokemon34.png",
+      "img/Pokemon35.png",
+      "img/Pokemon36.png",
+      "img/Pokemon37.png",
+      "img/Pokemon38.png",
+      "img/Pokemon39.png",
+      "img/Pokemon40.png",
+      "img/Pokemon41.png",
+      "img/Pokemon42.png",
+      "img/Pokemon43.png",
+      "img/Pokemon44.png",
+      "img/Pokemon45.png",
+      "img/Pokemon46.png",
+      "img/Pokemon47.png",
+      "img/Pokemon48.png",
+      "img/Pokemon49.png",
+      "img/Pokemon50.png",
+      "img/Pokemon52.png",
+      "img/Pokemon53.png",
+      "img/Pokemon54.png",
+      "img/Pokemon55.png",
+      "img/Pokemon56.png",
+      "img/Pokemon57.png",
+      "img/Pokemon58.png",
+      "img/Pokemon59.png",
+      "img/Pokemon60.png",
+      "img/Pokemon61.png",
+      "img/Pokemon62.png",
+      "img/Pokemon63.png",
+      "img/Pokemon64.png",
+      "img/Pokemon65.png",
+      "img/Pokemon66.png",
+      "img/Pokemon67.png",
+      "img/Pokemon68.png",
+      "img/Pokemon69.png",
+      "img/Pokemon70.png",
+      "img/Pokemon71.png",
+      "img/Pokemon72.png",
+      "img/Pokemon73.png",
+      "img/Pokemon74.png",
+      "img/Pokemon75.png",
+      "img/Pokemon76.png",
+      "img/Pokemon77.png",
+      "img/Pokemon78.png",
+      "img/Pokemon79.png",
+      "img/Pokemon80.png",
+      "img/Pokemon81.png",
+      "img/Pokemon82.png",
+      "img/Pokemon83.png",
+      "img/Pokemon84.png",
+      "img/Pokemon85.png",
+      "img/Pokemon86.png",
+      "img/Pokemon87.png",
+      "img/Pokemon88.png",
+      "img/Pokemon89.png",
+      "img/Pokemon90.png",
+      "img/Pokemon91.png",
+      "img/Pokemon92.png",
+      "img/Pokemon93.png",
+      "img/Pokemon94.png",
+      "img/Pokemon95.png",
+      "img/Pokemon96.png",
+      "img/Pokemon97.png",
+      "img/Pokemon98.png",
+      "img/Pokemon99.png",
+      "img/Pokemon100.png",
+      "img/Pokemon101.png",
+      "img/Pokemon102.png",
+      "img/Pokemon103.png",
+      "img/Pokemon104.png",
+      "img/Pokemon105.png",
+      "img/Pokemon106.png",
+      "img/Pokemon107.png",
+      "img/Pokemon108.png",
+      "img/Pokemon109.png",
+      "img/Pokemon110.png",
+      "img/Pokemon111.png",
+      "img/Pokemon112.png",
+      "img/Pokemon113.png",
+      "img/Pokemon114.png",
+      "img/Pokemon115.png",
+      "img/Pokemon116.png",
+      "img/Pokemon117.png",
+      "img/Pokemon118.png",
+      "img/Pokemon119.png",
+      "img/Pokemon120.png",
+      "img/Pokemon121.png",
+      "img/Pokemon122.png",
+      "img/Pokemon123.png",
+      "img/Pokemon124.png",
+      "img/Pokemon125.png",
+      "img/Pokemon126.png",
+      "img/Pokemon127.png",
+      "img/Pokemon128.png",
+      "img/Pokemon129.png",
+      "img/Pokemon130.png",
+      "img/Pokemon131.png",
+      "img/Pokemon132.png",
+      "img/Pokemon133.png",
+      "img/Pokemon134.png",
+      "img/Pokemon135.png",
+      "img/Pokemon136.png",
+      "img/Pokemon137.png",
+      "img/Pokemon138.png",
+      "img/Pokemon139.png",
+      "img/Pokemon140.png",
+      "img/Pokemon141.png",
+      "img/Pokemon142.png",
+      "img/Pokemon143.png",
+      "img/Pokemon144.png",
+      "img/Pokemon145.png",
+      "img/Pokemon146.png",
+      "img/Pokemon147.png",
+      "img/Pokemon148.png",
+      "img/Pokemon149.png",
+      "img/Pokemon150.png",
+      "img/Pokemon151.png",
+      "img/Pokemon152.png",
+      "img/Pokemon153.png",
+      "img/Pokemon154.png",
+      "img/Pokemon155.png",
+      "img/Pokemon156.png",
+      "img/Pokemon157.png",
+      "img/Pokemon158.png",
+      "img/Pokemon159.png",
+      "img/Pokemon160.png",
+      "img/Pokemon161.png",
+      "img/Pokemon162.png",
+      "img/Pokemon163.png",
+      "img/Pokemon164.png",
+      "img/Pokemon165.png",
+      "img/Pokemon166.png",
+      "img/Pokemon167.png",
+      "img/Pokemon168.png",
+      "img/Pokemon169.png",
+      "img/Pokemon170.png",
+      "img/Pokemon171.png",
+      "img/Pokemon172.png",
+      "img/Pokemon173.png",
+      "img/Pokemon174.png",
+      "img/Pokemon175.png",
+      "img/Pokemon176.png",
+      "img/Pokemon177.png",
+      "img/Pokemon178.png",
+      "img/Pokemon179.png",
+      "img/Pokemon180.png",
+      "img/Pokemon181.png",
+      "img/Pokemon182.png",
+      "img/Pokemon183.png",
+      "img/Pokemon184.png",
+      "img/Pokemon185.png",
+      "img/Pokemon186.png",
+      "img/Pokemon187.png",
+      "img/Pokemon188.png",
+      "img/Pokemon189.png",
+      "img/Pokemon190.png",
+      "img/Pokemon191.png",
+      "img/Pokemon192.png",
+      "img/Pokemon193.png",
+      "img/Pokemon194.png",
+      "img/Pokemon195.png",
+      "img/Pokemon196.png",
+      "img/Pokemon197.png",
+      "img/Pokemon198.png",
+      "img/Pokemon199.png",
+      "img/Pokemon200.png"
 
-    <!-- Grid de quadrados grandes: 3 colunas × 2 linhas -->
-    <div class="container">
-        <div class="square-container">
-            <div class="square" id="square0"><input type="file" accept="image/*"></div>
-            <input type="text" class="text-box" id="text0" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="square" id="square1"><input type="file" accept="image/*"></div>
-            <input type="text" class="text-box" id="text1" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="square" id="square2"><input type="file" accept="image/*"></div>
-            <input type="text" class="text-box" id="text2" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="square" id="square3"><input type="file" accept="image/*"></div>
-            <input type="text" class="text-box" id="text3" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="square" id="square4"><input type="file" accept="image/*"></div>
-            <input type="text" class="text-box" id="text4" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="square" id="square5"><input type="file" accept="image/*"></div>
-            <input type="text" class="text-box" id="text5" placeholder="Digite aqui">
-        </div>
-    </div>
 
-    <!-- Grid de quadrados menores: 4 colunas × 4 linhas -->
-    <div class="small-grid">
-        <!-- Criar 16 quadrados menores -->
-        <!-- Podemos usar loop via JS, mas aqui está manual para referência -->
-        <div class="square-container">
-            <div class="small-square" id="small0"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text0" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small1"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text1" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small2"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text2" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small3"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text3" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small4"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text4" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small5"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text5" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small6"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text6" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small7"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text7" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small8"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text8" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small9"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text9" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small10"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text10" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small11"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text11" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small12"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text12" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small13"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text13" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small14"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text14" placeholder="Digite aqui">
-        </div>
-        <div class="square-container">
-            <div class="small-square" id="small15"><input type="file" accept="image/*"></div>
-            <input type="text" class="small-text-box" id="small-text15" placeholder="Digite aqui">
-        </div>
-    </div>
+    ];
 
-</div>
+    function wonderTrade() {
+      const button = document.getElementById("wonderBtn");
+      const result = document.getElementById("result");
 
-<script>
-    function loadContent() {
-        // Super-top
-        const superTop = localStorage.getItem('super-top');
-        if(superTop) document.getElementById('super-top').value = superTop;
+      const now = Date.now();
+      const lastClick = localStorage.getItem('lastClickTimestamp');
+      const cooldown = 30 * 60 * 1000; // ajuste do cooldown
 
-        // Topo 8 caixas
-        for (let i = 0; i < 8; i++) {
-            const savedTop = localStorage.getItem('top' + i);
-            if (savedTop) document.getElementById('top' + i).value = savedTop;
-        }
+      // verifica cooldown
+      if (lastClick && now - lastClick < cooldown) {
+        const minutesLeft = Math.ceil((cooldown - (now - lastClick)) / 60000);
+        alert(`Espere ${minutesLeft} minutos antes de trocar novamente!`);
+        return;
+      }
 
-        // Quadrados grandes
-        for (let i = 0; i < 6; i++) {
-            const dataUrl = localStorage.getItem('square' + i);
-            if (dataUrl) {
-                const square = document.getElementById('square' + i);
-                const img = document.createElement('img');
-                img.src = dataUrl;
-                img.classList.add('uploaded');
-                square.appendChild(img);
-            }
+      // marca timestamp do clique
+      localStorage.setItem('lastClickTimestamp', now);
 
-            const savedText = localStorage.getItem('text' + i);
-            if (savedText) document.getElementById('text' + i).value = savedText;
-        }
+      // desativa o botão temporariamente para o delay de 2 segundos
+      button.disabled = true;
+      button.style.opacity = 0.5;
 
-        // Quadrados menores
-        for (let i = 0; i < 16; i++) {
-            const dataUrl = localStorage.getItem('small' + i);
-            if (dataUrl) {
-                const square = document.getElementById('small' + i);
-                const img = document.createElement('img');
-                img.src = dataUrl;
-                img.classList.add('uploaded');
-                square.appendChild(img);
-            }
+      // contador de cliques
+      let count = localStorage.getItem('clickCount') || 0;
+      count = parseInt(count) + 1;
+      localStorage.setItem('clickCount', count);
+      document.getElementById("clickCount").innerText = `Você clicou ${count} vezes`;
 
-            const savedText = localStorage.getItem('small-text' + i);
-            if (savedText) document.getElementById('small-text' + i).value = savedText;
-        }
+      // hora do último clique
+      const date = new Date();
+      const hours = date.getHours().toString().padStart(2,'0');
+      const minutes = date.getMinutes().toString().padStart(2,'0');
+      const timeString = `${hours}:${minutes}`;
+      localStorage.setItem('lastClickTime', timeString);
+      document.getElementById("lastClickTime").innerText = `Último clique: ${timeString}`;
+
+      // sorteio da imagem
+      const randomIndex = Math.floor(Math.random() * images.length);
+      const selectedImage = images[randomIndex];
+
+      // mensagem temporária
+      result.innerHTML = `<p>Trocando... aguarde 3 segundos</p>`;
+
+      // delay antes de mostrar a imagem
+      setTimeout(() => {
+        // aqui definimos width manualmente
+        result.innerHTML = `<img src="${selectedImage}" alt="Imagem sorteada" style="width:100px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.3);">`;
+        button.disabled = false;
+        button.style.opacity = 1;
+      }, 2000);
     }
-
-    // Super-top
-    const superTopBox = document.getElementById('super-top');
-    superTopBox.addEventListener('input', () => {
-        localStorage.setItem('super-top', superTopBox.value);
-    });
-
-    // Topo 8 caixas
-    for (let i = 0; i < 8; i++) {
-        const topBox = document.getElementById('top' + i);
-        topBox.addEventListener('input', () => {
-            localStorage.setItem('top' + i, topBox.value);
-        });
-    }
-
-    // Quadrados grandes
-    for (let i = 0; i < 6; i++) {
-        const square = document.getElementById('square' + i);
-        const input = square.querySelector('input[type="file"]');
-        const textBox = document.getElementById('text' + i);
-
-        square.addEventListener('click', () => input.click());
-
-        input.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const oldImg = square.querySelector('img.uploaded');
-                    if (oldImg) oldImg.remove();
-
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.classList.add('uploaded');
-                    square.appendChild(img);
-
-                    localStorage.setItem('square' + i, e.target.result);
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-
-        textBox.addEventListener('input', () => {
-            localStorage.setItem('text' + i, textBox.value);
-        });
-    }
-
-    // Quadrados menores
-    for (let i = 0; i < 16; i++) {
-        const square = document.getElementById('small' + i);
-        const input = square.querySelector('input[type="file"]');
-        const textBox = document.getElementById('small-text' + i);
-
-        square.addEventListener('click', () => input.click());
-
-        input.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const oldImg = square.querySelector('img.uploaded');
-                    if (oldImg) oldImg.remove();
-
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    img.classList.add('uploaded');
-                    square.appendChild(img);
-
-                    localStorage.setItem('small' + i, e.target.result);
-                }
-                reader.readAsDataURL(file);
-            }
-        });
-
-        textBox.addEventListener('input', () => {
-            localStorage.setItem('small-text' + i, textBox.value);
-        });
-    }
-
-    loadContent();
-</script>
+  </script>
 
 </body>
 </html>
